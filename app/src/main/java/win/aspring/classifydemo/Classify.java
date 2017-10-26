@@ -10,7 +10,6 @@ import win.aspring.library.interf.ClassifyBean;
  * 更新：2017-10-26 15:58
  * 描述：分类实体类
  * 版本：1.0
- * 版权：Copyright (C) 2017 HISOFT HENAN CO. LTD.
  * ============================================
  */
 public class Classify implements ClassifyBean {

@@ -15,7 +15,6 @@ import win.aspring.library.interf.ImageLoaderListener;
  * 更新：2017-10-26 16:08
  * 描述：图片加载器
  * 版本：1.0
- * 版权：Copyright (C) 2017 HISOFT HENAN CO. LTD.
  * ============================================
  */
 public class ImageLoader implements ImageLoaderListener {

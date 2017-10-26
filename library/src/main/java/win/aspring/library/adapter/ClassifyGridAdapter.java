@@ -1,7 +1,6 @@
 package win.aspring.library.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import win.aspring.library.interf.ImageLoaderListener;
  * 更新：2017/10/26 15:03
  * 描述：分类适配器
  * 版本：1.0
- * 版权：Copyright （C） 2017 HISOFT HENAN CO. LTD.
  * ============================================
  */
 public class ClassifyGridAdapter extends BaseAdapter {
@@ -34,6 +32,15 @@ public class ClassifyGridAdapter extends BaseAdapter {
 
     public void setImageLoaderListener(ImageLoaderListener imageLoaderListener) {
         mImageLoaderListener = imageLoaderListener;
+    }
+
+    /**
+     * 字体颜色
+     */
+    private int mTextColor;
+
+    public void setTextColor(int textColor) {
+        mTextColor = textColor;
     }
 
     /**
@@ -80,15 +87,17 @@ public class ClassifyGridAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        /**
+        /*
          * 在给View绑定显示的数据时，计算正确的position = position + mCurIndex * mPageSize
          */
         int pos = position + mCurIndex * mPageSize;
         ClassifyBean model = mList.get(pos);
+        if (mTextColor > 0)
+            viewHolder.tv.setTextColor(mTextColor);
+
         viewHolder.tv.setText(model.getName());
 
         String url = model.getImagePath();
-        Log.e("ClassifyGridAdapter", "getView: url = " + url);
         mImageLoaderListener.displayView(mContext, url, viewHolder.iv);
 
         return convertView;

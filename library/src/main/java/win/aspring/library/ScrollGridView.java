@@ -3,6 +3,9 @@ package win.aspring.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -35,18 +38,16 @@ import win.aspring.library.interf.OnClassifyClickListener;
 public class ScrollGridView extends FrameLayout implements ViewPager.OnPageChangeListener {
     public static final String TAG = ScrollGridView.class.getSimpleName();
     private static final int DEFAULT_TEXT_COLOR = Color.parseColor("#666666");
-    private static final int DEFAULT_INDICATOR_DIAMETER = 8;
-    private static final int DEFAULT_SELECTED_DRAWABLE = R.drawable.selected_radius;
-    private static final int DEFAULT_UNSELECT_DRAWABLE = R.drawable.gray_radius;
-    private static final int DEFAULT_INDICATOR_LEFT_MARGIN = 5;
-    private static final int DEFAULT_INDICATOR_RIGHT_MARGIN = 5;
+    private static final int DEFAULT_INDICATOR_DIAMETER = 24;
+    private static final int DEFAULT_INDICATOR_LEFT_MARGIN = 10;
+    private static final int DEFAULT_INDICATOR_RIGHT_MARGIN = 10;
     private static final int DEFAULT_INDICATOR_POSITION = Gravity.CENTER;
     private static final boolean DEFAULT_IS_SHOW_INDICATOR = true;
 
     private int mTextColor;
     private int mIndicatorDiameter;
-    private int mSelectedDrawable;
-    private int mUnSelectDrawable;
+    private Drawable mSelectedDrawable;
+    private Drawable mUnSelectDrawable;
     private int mIndicatorLeftMargin;
     private int mIndicatorRightMargin;
     private int mIndicatorPosition;
@@ -128,7 +129,19 @@ public class ScrollGridView extends FrameLayout implements ViewPager.OnPageChang
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ScrollGridView);
         mTextColor = a.getColor(R.styleable.ScrollGridView_text_color, DEFAULT_TEXT_COLOR);
-        mIndicatorDiameter = a.getDimensionPixelOffset(R.styleable.ScrollGridView_indicator_diameter, DEFAULT_INDICATOR_DIAMETER);
+        mIndicatorDiameter = a.getDimensionPixelSize(R.styleable.ScrollGridView_indicator_diameter, DEFAULT_INDICATOR_DIAMETER);
+        mSelectedDrawable = a.getDrawable(R.styleable.ScrollGridView_indicator_selected_drawable);
+        if (mSelectedDrawable == null) {
+            mSelectedDrawable = getDrawable(R.drawable.selected_radius);
+        }
+        mUnSelectDrawable = a.getDrawable(R.styleable.ScrollGridView_indicator_unSelect_drawable);
+        if (mUnSelectDrawable == null) {
+            mUnSelectDrawable = getDrawable(R.drawable.gray_radius);
+        }
+        mIndicatorLeftMargin = a.getDimensionPixelSize(R.styleable.ScrollGridView_indicator_left_margin, DEFAULT_INDICATOR_LEFT_MARGIN);
+        mIndicatorRightMargin = a.getDimensionPixelSize(R.styleable.ScrollGridView_indicator_right_margin, DEFAULT_INDICATOR_RIGHT_MARGIN);
+        mIndicatorPosition = a.getInt(R.styleable.ScrollGridView_indicator_position, DEFAULT_INDICATOR_POSITION);
+        mIsShowIndicator = a.getBoolean(R.styleable.ScrollGridView_is_show_indicator, DEFAULT_IS_SHOW_INDICATOR);
 
         a.recycle();
 
@@ -192,6 +205,7 @@ public class ScrollGridView extends FrameLayout implements ViewPager.OnPageChang
             GridView gridView = new GridView(getContext());
             gridView.setNumColumns(mColumnSize);
             ClassifyGridAdapter gridAdapter = new ClassifyGridAdapter(getContext(), mList, i, mPageSize);
+            gridAdapter.setTextColor(mTextColor);
             if (mImageLoaderListener != null) {
                 gridAdapter.setImageLoaderListener(mImageLoaderListener);
             } else {
@@ -215,8 +229,14 @@ public class ScrollGridView extends FrameLayout implements ViewPager.OnPageChang
         //设置适配器
         mViewPager.setAdapter(new ViewPagerAdapter(mPagerList));
         mViewPager.setFocusable(true);
-        //设置圆点
-        setOvalLayout();
+
+        if (mIsShowIndicator) {
+            mIndicator.setVisibility(VISIBLE);
+            //设置圆点
+            setOvalLayout();
+        } else {
+            mIndicator.setVisibility(GONE);
+        }
     }
 
     /**
@@ -224,18 +244,18 @@ public class ScrollGridView extends FrameLayout implements ViewPager.OnPageChang
      */
     private void setOvalLayout() {
         mIndicator.removeAllViews();
-        mIndicator.setGravity(Gravity.CENTER);
+        mIndicator.setGravity(mIndicatorPosition);
         for (int i = 0; i < mPageCount; i++) {
             ImageView imageView = new ImageView(getContext());
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp2px(8), dp2px(8));
-            params.leftMargin = dp2px(5);
-            params.rightMargin = dp2px(5);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mIndicatorDiameter, mIndicatorDiameter);
+            params.leftMargin = mIndicatorLeftMargin;
+            params.rightMargin = mIndicatorRightMargin;
             imageView.setLayoutParams(params);
             if (i == 0) {
-                imageView.setImageResource(R.drawable.selected_radius);
+                imageView.setImageDrawable(mSelectedDrawable);
             } else {
-                imageView.setImageResource(R.drawable.gray_radius);
+                imageView.setImageDrawable(mUnSelectDrawable);
             }
             mIndicator.addView(imageView);
         }
@@ -249,9 +269,9 @@ public class ScrollGridView extends FrameLayout implements ViewPager.OnPageChang
     @Override
     public void onPageSelected(int position) {
         // 取消圆点选中
-        ((ImageView) mIndicator.getChildAt(mCurrentIndex)).setImageResource(R.drawable.gray_radius);
+        ((ImageView) mIndicator.getChildAt(mCurrentIndex)).setImageDrawable(mUnSelectDrawable);
         // 圆点选中
-        ((ImageView) mIndicator.getChildAt(position)).setImageResource(R.drawable.selected_radius);
+        ((ImageView) mIndicator.getChildAt(position)).setImageDrawable(mSelectedDrawable);
 
         mCurrentIndex = position;
     }
@@ -270,5 +290,12 @@ public class ScrollGridView extends FrameLayout implements ViewPager.OnPageChang
     private int dp2px(float dpValue) {
         final float scale = getContext().getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    /**
+     * getDrawable过时方法处理
+     */
+    public Drawable getDrawable(@DrawableRes int id) {
+        return ContextCompat.getDrawable(getContext(), id);
     }
 }

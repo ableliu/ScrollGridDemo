@@ -8,7 +8,6 @@ package win.aspring.library.interf;
  * 更新：2017-10-26 15:04
  * 描述：分类的实体类都要实现这个接口
  * 版本：1.0
- * 版权：Copyright （C） 2017 河南商宇科技有限公司
  * ============================================
  */
 public interface ClassifyBean {

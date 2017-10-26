@@ -13,7 +13,6 @@ import android.view.ViewGroup;
  * 更新：2017/10/26 14:40
  * 描述：ViewPager的适配器
  * 版本：1.0
- * 版权：Copyright （C） 2017 HISOFT HENAN CO. LTD.
  * ============================================
  */
 public class ViewPagerAdapter extends PagerAdapter {
