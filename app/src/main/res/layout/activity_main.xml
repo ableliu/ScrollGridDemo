@@ -12,6 +12,9 @@
         android:id="@+id/scroll_grid"
         android:layout_width="match_parent"
         android:layout_height="170dp"
-        app:indicator_position="right"/>
+        app:indicator_diameter="8dp"
+        app:indicator_left_margin="2dp"
+        app:indicator_position="center"
+        app:indicator_right_margin="2dp"/>
 
 </RelativeLayout>

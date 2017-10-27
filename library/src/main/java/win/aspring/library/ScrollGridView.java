@@ -38,9 +38,9 @@ import win.aspring.library.interf.OnClassifyClickListener;
 public class ScrollGridView extends FrameLayout implements ViewPager.OnPageChangeListener {
     public static final String TAG = ScrollGridView.class.getSimpleName();
     private static final int DEFAULT_TEXT_COLOR = Color.parseColor("#666666");
-    private static final int DEFAULT_INDICATOR_DIAMETER = 24;
-    private static final int DEFAULT_INDICATOR_LEFT_MARGIN = 10;
-    private static final int DEFAULT_INDICATOR_RIGHT_MARGIN = 10;
+    private static final int DEFAULT_INDICATOR_DIAMETER = 20;
+    private static final int DEFAULT_INDICATOR_LEFT_MARGIN = 8;
+    private static final int DEFAULT_INDICATOR_RIGHT_MARGIN = 8;
     private static final int DEFAULT_INDICATOR_POSITION = Gravity.CENTER;
     private static final boolean DEFAULT_IS_SHOW_INDICATOR = true;
 
